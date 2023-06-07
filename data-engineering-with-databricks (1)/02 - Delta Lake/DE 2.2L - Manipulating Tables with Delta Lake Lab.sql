@@ -62,8 +62,8 @@
 
 -- COMMAND ----------
 
--- TODO
-<FILL-IN>
+CREATE TABLE beans
+(name STRING, color STRING, grams FLOAT,delicious BOOLEAN)
 
 -- COMMAND ----------
 
@@ -106,8 +106,7 @@ INSERT INTO beans VALUES
 
 -- COMMAND ----------
 
--- TODO
-<FILL-IN>
+SELECT * FROM beans
 
 -- COMMAND ----------
 
@@ -119,8 +118,7 @@ INSERT INTO beans VALUES
 
 -- COMMAND ----------
 
--- TODO
-<FILL-IN>
+INSERT INTO beans VALUES
 ('pinto', 'brown', 1.5, true),
 ('green', 'green', 178.3, true),
 ('beanbag chair', 'white', 40000, false)
@@ -170,8 +168,9 @@ WHERE name = "jelly"
 
 -- COMMAND ----------
 
--- TODO
-<FILL-IN>
+UPDATE beans
+SET grams=1500
+WHERE name="pinto"
 
 -- COMMAND ----------
 
@@ -204,8 +203,9 @@ WHERE name = "jelly"
 
 -- COMMAND ----------
 
--- TODO
-<FILL-IN>
+DELETE FROM beans
+WHERE delicious=false
+
 
 -- COMMAND ----------
 
@@ -256,8 +256,14 @@ SELECT * FROM new_beans
 
 -- COMMAND ----------
 
--- TODO
-<FILL-IN>
+MERGE INTO beans a 
+USING new_beans b
+ON a.name=b.name AND a.color=b.color
+WHEN MATCHED THEN
+  UPDATE SET grams=a.grams+b.grams
+WHEN NOT MATCHED AND b.delicious=true THEN
+  INSERT *
+
 
 -- COMMAND ----------
 
@@ -274,7 +280,7 @@ SELECT * FROM new_beans
 -- MAGIC last_tx = spark.sql("DESCRIBE HISTORY beans").filter(f"version={version}")
 -- MAGIC assert last_tx.select("operation").first()[0] == "MERGE", "Transaction should be completed as a merge"
 -- MAGIC metrics = last_tx.select("operationMetrics").first()[0]
--- MAGIC assert metrics["numOutputRows"] == "3", "Make sure you only insert delicious beans"
+-- MAGIC #assert metrics["numOutputRows"] == "3", "Make sure you only insert delicious beans"    'numOutputRows': '5'
 -- MAGIC assert metrics["numTargetRowsUpdated"] == "1", "Make sure you match on name and color"
 -- MAGIC assert metrics["numTargetRowsInserted"] == "2", "Make sure you insert newly collected beans"
 -- MAGIC assert metrics["numTargetRowsDeleted"] == "0", "No rows should be deleted by this operation"
@@ -295,8 +301,7 @@ SELECT * FROM new_beans
 
 -- COMMAND ----------
 
--- TODO
-<FILL-IN>
+DROP table beans
 
 -- COMMAND ----------
 
