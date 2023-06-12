@@ -112,8 +112,8 @@ DESCRIBE HISTORY sales
 
 -- COMMAND ----------
 
--- INSERT OVERWRITE sales
--- SELECT *, current_timestamp() FROM parquet.`${da.paths.datasets}/raw/sales-historical`
+INSERT OVERWRITE sales
+ SELECT *, current_timestamp() FROM parquet.`${da.paths.datasets}/raw/sales-historical`
 
 -- COMMAND ----------
 
@@ -129,6 +129,7 @@ DESCRIBE HISTORY sales
 
 -- COMMAND ----------
 
+--append produce duplicate rows that will affect the future merge (:
 INSERT INTO sales
 SELECT * FROM parquet.`${da.paths.datasets}/raw/sales-30m`
 
@@ -182,6 +183,17 @@ FROM parquet.`${da.paths.datasets}/raw/users-30m`
 
 -- COMMAND ----------
 
+  SELECT user_id,count(*) 
+  FROM users_update
+  Group by user_id
+  having count(*)>=2;
+
+  SELECT * FROM users_update
+  where user_id="UA000000107392855"
+
+
+-- COMMAND ----------
+
 MERGE INTO users a
 USING users_update b
 ON a.user_id = b.user_id
@@ -210,6 +222,22 @@ WHEN NOT MATCHED THEN INSERT *
 -- MAGIC This optimized command uses the same **`MERGE`** syntax but only provided a **`WHEN NOT MATCHED`** clause.
 -- MAGIC
 -- MAGIC Below, we use this to confirm that records with the same **`user_id`** and **`event_timestamp`** aren't already in the **`events`** table.
+
+-- COMMAND ----------
+
+-- MAGIC %python
+-- MAGIC #too see files that are events
+-- MAGIC dataset_path = f"{DA.paths.datasets}/raw/"
+-- MAGIC print(dataset_path)
+-- MAGIC
+-- MAGIC files = dbutils.fs.ls(dataset_path)
+-- MAGIC display(files)
+
+-- COMMAND ----------
+
+CREATE OR REPLACE TEMP VIEW events_update AS 
+SELECT *, current_timestamp() AS updated 
+FROM parquet.`${da.paths.datasets}/raw/events-historical`
 
 -- COMMAND ----------
 

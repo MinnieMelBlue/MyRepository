@@ -208,8 +208,8 @@ SELECT * FROM purchase_dates
 
 -- COMMAND ----------
 
--- INSERT INTO purchase_dates VALUES
--- (1, 600000000, 42.0, "2020-06-18")
+INSERT INTO purchase_dates VALUES
+ (1, 600000000, 42.0, "2020-06-18")
 
 -- COMMAND ----------
 
@@ -280,7 +280,7 @@ PARTITIONED BY (first_touch_date)
 AS
   SELECT *, 
     cast(cast(user_first_touch_timestamp/1e6 AS TIMESTAMP) AS DATE) first_touch_date, 
-    current_timestamp() updated,
+    current_timestamp() updated, --at this was processed
     input_file_name() source_file
   FROM parquet.`${da.paths.datasets}/raw/users-historical/`;
   

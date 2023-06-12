@@ -237,6 +237,13 @@ OPTIONS (
 
 -- COMMAND ----------
 
+-- MAGIC %python
+-- MAGIC def getTableLocation(tableName):
+-- MAGIC     return spark.sql(f"DESCRIBE DETAIL {tableName}").select("location").first()[0]
+-- MAGIC managedTablePath = getTableLocation("users_jdbc")
+
+-- COMMAND ----------
+
 -- MAGIC %md
 -- MAGIC
 -- MAGIC
@@ -267,7 +274,7 @@ DESCRIBE EXTENDED users_jdbc
 -- COMMAND ----------
 
 -- MAGIC %python
--- MAGIC jdbc_users_path = f"{DA.paths.user_db}/users_jdbc/"
+-- MAGIC jdbc_users_path = f"{DA.paths.user_db}/users_jdbc"
 -- MAGIC print(jdbc_users_path)
 -- MAGIC
 -- MAGIC files = dbutils.fs.ls(jdbc_users_path)

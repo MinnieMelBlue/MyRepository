@@ -80,7 +80,7 @@ display(df)
 import re
 
 username = spark.sql("SELECT current_user()").first()[0]
-clean_username = re.sub("[^a-zA-Z0-9]", "_", username)
+clean_username = re.sub("[^a-zA-Z0-9]", "_", username) #avoid @ or others symbols
 db_name = f"dbacademy_{clean_username}_{course}_5_3l"
 working_dir = f"dbfs:/user/{username}/dbacademy/{course}/5.3l"
 
@@ -113,7 +113,7 @@ def create_database(course, reset=True):
 
     if reset:
         spark.sql(f"DROP DATABASE IF EXISTS {db_name} CASCADE")
-        dbutils.fs.rm(working_dir, True)
+        dbutils.fs.rm(working_dir, True) #Removes a file or directory
         
     spark.sql(f"CREATE DATABASE IF NOT EXISTS {db_name} LOCATION '{working_dir}/{db_name}.db'")
     spark.sql(f"USE {db_name}")
