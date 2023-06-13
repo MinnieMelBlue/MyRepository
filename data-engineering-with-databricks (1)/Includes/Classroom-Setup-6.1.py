@@ -26,8 +26,23 @@ class DataFactory:
             curr_file = f"{str(self.curr_mo).zfill(2)}.json"
             target_dir = f"{self.userdir}/{curr_file}"
             print(f"Loading the file {curr_file} to the tracker dataset")
+            print(f"{self.source}/{curr_file}")
+            print(target_dir)
             dbutils.fs.cp(f"{self.source}/{curr_file}", target_dir)
             self.curr_mo += 1
+
+# COMMAND ----------
+
+DA.init()
+DA.paths.checkpoints = f"{DA.paths.working_dir}/checkpoints"    
+DA.data_factory = DataFactory()
+
+print()
+DA.data_factory.load()
+
+# COMMAND ----------
+
+dbutils.fs.cp("/mnt/training/healthcare/tracker/streaming//01.json", "dbfs:/user/cristina.la.croce@avanade.com/dbacademy/dewd/6.1/tracker/01.json")
 
 # COMMAND ----------
 
